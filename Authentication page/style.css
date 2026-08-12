@@ -1,0 +1,413 @@
+/* ==================================================================
+   DESIGN TOKENS
+   Palette: midnight plum void + muted gold + soft violet accent
+================================================================== */
+:root {
+  --bg-void: #0b0714;
+  --bg-deep: #170f28;
+  --accent-gold: #cba135;
+  --accent-gold-soft: #e6c665;
+  --accent-violet: #8a6fd1;
+  --accent-violet-soft: #b09ce8;
+  --glass-fill: rgba(255, 255, 255, 0.055);
+  --glass-fill-strong: rgba(255, 255, 255, 0.09);
+  --glass-border: rgba(230, 210, 255, 0.14);
+  --text-primary: #f3ecdd;
+  --text-muted: #b7a9c9;
+  --shadow-glow-gold: 0 0 32px rgba(203, 161, 53, 0.28);
+  --shadow-glow-violet: 0 0 32px rgba(138, 111, 209, 0.28);
+
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'Manrope', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background-color: var(--bg-void);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+a { text-decoration: none; }
+
+/* ==================================================================
+   BACKGROUND VIDEO LAYER (placeholder)
+   Full-viewport, fixed, behind all content
+================================================================== */
+.bg-video-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  /* Fallback gradient while no video source is supplied */
+  background: radial-gradient(ellipse at 20% 20%, #241638 0%, transparent 55%),
+              radial-gradient(ellipse at 80% 75%, #2b1a12 0%, transparent 55%),
+              linear-gradient(160deg, #0b0714 0%, #170f28 55%, #0b0714 100%);
+}
+
+.bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bg-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11, 7, 20, 0.55) 0%, rgba(11, 7, 20, 0.72) 60%, rgba(11, 7, 20, 0.88) 100%);
+  z-index: -1;
+}
+
+/* ==================================================================
+   NAVBAR — Glassmorphism
+================================================================== */
+.glass-navbar {
+  background: rgba(23, 15, 40, 0.35);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid var(--glass-border);
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+  transition: background 0.3s ease;
+}
+
+.brand-logo {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent-gold-soft);
+  letter-spacing: 0.03em;
+}
+
+.navbar-nav .nav-link {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin: 0 0.4rem;
+  transition: color 0.25s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--accent-gold-soft);
+}
+
+.btn-nav-cta {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  color: var(--text-primary);
+  padding: 0.4rem 1.3rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-nav-cta:hover {
+  background: var(--accent-gold);
+  color: #1a1206;
+  border-color: var(--accent-gold);
+}
+
+/* ==================================================================
+   MAIN WRAPPER
+================================================================== */
+.main-wrapper {
+  min-height: 100vh;
+  padding: 7.5rem 1.25rem 3rem;
+}
+
+/* ==================================================================
+   AUTH PORTAL — the central glass container ("BLUR SIDE" / "MAIN DIV")
+   Signature element: a soft rotating-glow aura frame around the
+   active card, echoing the idea of a "portal" between two states.
+================================================================== */
+.auth-portal {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  isolation: isolate;
+}
+
+.auth-portal::before {
+  /* Aura glow ring — signature detail */
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 28px;
+  padding: 1px;
+  background: conic-gradient(from 0deg, var(--accent-gold), var(--accent-violet), var(--accent-gold));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.55;
+  animation: rotateAura 10s linear infinite, softGlow 3.2s ease-in-out infinite;
+  z-index: -1;
+}
+
+.panel {
+  background: var(--glass-fill);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid var(--glass-border);
+  border-radius: 26px;
+  padding: 3rem 2.75rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  width: 100%;
+}
+
+/* ---------- Welcome panel ---------- */
+.welcome-panel {
+  text-align: center;
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.72rem;
+  color: var(--accent-violet-soft);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.display-title {
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.lede {
+  color: var(--text-muted);
+  font-size: 1rem;
+  max-width: 420px;
+  margin: 0 auto 2.25rem;
+  line-height: 1.6;
+}
+
+.welcome-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ---------- Form panels ---------- */
+.form-panel {
+  position: relative;
+}
+
+.form-title {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 1.75rem;
+}
+
+.btn-back {
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  transition: all 0.25s ease;
+}
+
+.btn-back:hover {
+  background: var(--accent-violet);
+  border-color: var(--accent-violet);
+  color: #12081f;
+}
+
+.field-group { margin-bottom: 0.25rem; }
+
+.form-label {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  border-radius: 12px;
+  padding: 0.65rem 0.9rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.glass-input::placeholder { color: rgba(243, 236, 221, 0.35); }
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(203, 161, 53, 0.18);
+  color: var(--text-primary);
+}
+
+.input-icon-wrap {
+  position: relative;
+}
+
+.input-icon-wrap i {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  pointer-events: none;
+}
+
+.input-icon-wrap .glass-input {
+  padding-left: 2.4rem;
+}
+
+.form-check-input {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: var(--glass-border);
+}
+
+.form-check-input:checked {
+  background-color: var(--accent-gold);
+  border-color: var(--accent-gold);
+}
+
+.form-check-label { color: var(--text-muted); }
+
+.link-muted {
+  color: var(--accent-gold-soft);
+  font-weight: 600;
+}
+.link-muted:hover { color: var(--accent-gold); }
+
+.switch-line {
+  text-align: center;
+  margin-top: 1.5rem;
+  margin-bottom: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.switch-line a {
+  color: var(--accent-violet-soft);
+  font-weight: 700;
+}
+.switch-line a:hover { color: var(--accent-violet); }
+
+/* ==================================================================
+   BUTTONS — Pill by default, morph into rounded-rect on hover
+================================================================== */
+.btn-portal {
+  border: none;
+  padding: 0.75rem 2.1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+  transition: border-radius 0.35s ease, transform 0.25s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+
+.btn-portal:hover {
+  border-radius: 12px;
+  transform: translateY(-2px);
+}
+
+.btn-portal-gold {
+  background: linear-gradient(135deg, var(--accent-gold-soft), var(--accent-gold));
+  color: #1a1206;
+}
+.btn-portal-gold:hover {
+  box-shadow: var(--shadow-glow-gold);
+  color: #1a1206;
+}
+
+.btn-portal-violet {
+  background: linear-gradient(135deg, var(--accent-violet-soft), var(--accent-violet));
+  color: #150a26;
+}
+.btn-portal-violet:hover {
+  box-shadow: var(--shadow-glow-violet);
+  color: #150a26;
+}
+
+/* ==================================================================
+   ANIMATIONS
+================================================================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.96); }
+}
+
+/* Login form enters travelling from the right edge of the screen */
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(100vw); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Sign Up form enters travelling from the left edge of the screen */
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-100vw); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes softGlow {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.75; }
+}
+
+@keyframes rotateAura {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.anim-fade-in      { animation: fadeIn 0.4s ease forwards; }
+.anim-fade-out     { animation: fadeOut 0.35s ease forwards; }
+.anim-slide-right  { animation: slideFromRight 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.anim-slide-left   { animation: slideFromLeft 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* ==================================================================
+   RESPONSIVE
+================================================================== */
+@media (max-width: 767.98px) {
+  .panel { padding: 2.25rem 1.5rem; }
+  .display-title { font-size: 2.5rem; }
+  .form-title { font-size: 1.9rem; }
+  .welcome-actions { flex-direction: column; align-items: stretch; }
+  .btn-portal { width: 100%; }
+  .main-wrapper { padding-top: 6.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

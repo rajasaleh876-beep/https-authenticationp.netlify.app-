@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Raja Ahmed — Sign In / Sign Up</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=Pirata+One&display=swap" rel="stylesheet">
+<link rel="" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+/* ================= DESIGN TOKENS ================= */
+:root {
+  --bg-void: #0b0714;
+  --bg-deep: #170f28;
+  --accent-gold: #cba135;
+  --accent-gold-soft: #e6c665;
+  --accent-violet: #8a6fd1;
+  --accent-violet-soft: #b09ce8;
+  --glass-fill: rgba(255, 255, 255, 0.055);
+  --glass-border: rgba(230, 210, 255, 0.14);
+  --text-primary: #f3ecdd;
+  --text-muted: #b7a9c9;
+  --shadow-glow-gold: 0 0 32px rgba(203, 161, 53, 0.45);
+  --shadow-glow-violet: 0 0 32px rgba(138, 111, 209, 0.45);
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'Manrope', sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background-color: var(--bg-void);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+a { text-decoration: none; }
+
+/* ================= BACKGROUND VIDEO LAYER ================= */
+.bg-video-wrapper {
+  position: fixed; inset: 0; z-index: -2; overflow: hidden;
+  background: radial-gradient(ellipse at 20% 20%, #241638 0%, transparent 55%),
+              radial-gradient(ellipse at 80% 75%, #2b1a12 0%, transparent 55%),
+              linear-gradient(160deg, #0b0714 0%, #170f28 55%, #0b0714 100%);
+  background-size: 200% 200%;
+  animation: driftGradient 18s ease-in-out infinite;
+}
+.bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.bg-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(11,7,20,.55) 0%, rgba(11,7,20,.72) 60%, rgba(11,7,20,.88) 100%);
+  z-index: -1;
+}
+@keyframes driftGradient {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+/* ================= NAVBAR ================= */
+.glass-navbar {
+  background: rgba(23,15,40,.35);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid var(--glass-border);
+  padding-top: .85rem; padding-bottom: .85rem;
+}
+.brand-logo { font-family: 'Pirata One', var(--font-display); font-size: 1.85rem; font-weight: 400; color: var(--accent-gold-soft); letter-spacing: .04em; line-height: 1; }
+.brand-logo i { font-style: normal; }
+.navbar-nav .nav-link { color: var(--text-muted); font-weight: 500; font-size: .95rem; margin: 0 .4rem; transition: color .25s ease; }
+.navbar-nav .nav-link:hover { color: var(--accent-gold-soft); }
+.btn-nav-cta {
+  border: 1px solid var(--glass-border); background: var(--glass-fill); color: var(--text-primary);
+  padding: .4rem 1.3rem; border-radius: 999px; font-size: .9rem; font-weight: 600; transition: all .3s ease;
+}
+.btn-nav-cta:hover { background: var(--accent-gold); color: #1a1206; border-color: var(--accent-gold); }
+
+/* ================= MAIN WRAPPER ================= */
+.main-wrapper { min-height: 100vh; padding: 6rem 1.25rem 1.5rem; }
+
+/* ================= AUTH PORTAL (signature glow ring) ================= */
+.auth-portal {
+  position: relative; width: 100%; max-width: 620px; isolation: isolate;
+  animation: portalRise .7s cubic-bezier(.22,1,.36,1) both;
+}
+.auth-portal::before {
+  content: ""; position: absolute; inset: -2px; border-radius: 28px; padding: 1px;
+  background: conic-gradient(from 0deg, var(--accent-gold), var(--accent-violet), var(--accent-gold));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: .55; animation: rotateAura 10s linear infinite, softGlow 3.2s ease-in-out infinite; z-index: -1;
+}
+.panel {
+  background: var(--glass-fill);
+  backdrop-filter: blur(22px) saturate(150%); -webkit-backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid var(--glass-border); border-radius: 22px;
+  padding: 1.85rem 2.25rem; box-shadow: 0 24px 60px rgba(0,0,0,.45); width: 100%;
+  max-height: 88vh; overflow-y: auto;
+}
+
+/* Welcome panel */
+.welcome-panel { text-align: center; }
+.eyebrow { text-transform: uppercase; letter-spacing: .22em; font-size: .72rem; color: var(--accent-violet-soft); font-weight: 700; margin-bottom: .5rem; opacity: 0; animation: fadeIn .5s ease forwards; animation-delay: .05s; }
+.display-title { font-family: var(--font-display); font-size: 2.9rem; font-weight: 700; margin-bottom: .6rem; opacity: 0; animation: fadeIn .55s ease forwards; animation-delay: .15s; }
+.lede { color: var(--text-muted); font-size: .95rem; max-width: 420px; margin: 0 auto 1.5rem; line-height: 1.55; opacity: 0; animation: fadeIn .55s ease forwards; animation-delay: .25s; }
+.welcome-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; opacity: 0; animation: fadeIn .55s ease forwards; animation-delay: .35s; }
+
+/* Form panels */
+.form-title { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; margin-bottom: .9rem; }
+.btn-back {
+  background: var(--glass-fill); border: 1px solid var(--glass-border); color: var(--text-primary);
+  width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: .75rem; transition: all .25s ease; cursor: pointer; font-size: .85rem;
+}
+.btn-back:hover { background: var(--accent-violet); border-color: var(--accent-violet); color: #12081f; }
+.field-group { margin-bottom: 0; }
+.form-label { color: var(--text-muted); font-size: .76rem; font-weight: 600; letter-spacing: .02em; margin-bottom: .2rem; }
+.glass-input {
+  background: rgba(255,255,255,.045); border: 1px solid var(--glass-border); color: var(--text-primary);
+  border-radius: 10px; padding: .45rem .8rem; font-family: var(--font-body); font-size: .88rem;
+  transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
+}
+.glass-input::placeholder { color: rgba(243,236,221,.35); }
+.glass-input:focus { background: rgba(255,255,255,.08); border-color: var(--accent-gold); box-shadow: 0 0 0 3px rgba(203,161,53,.18); color: var(--text-primary); }
+.input-icon-wrap { position: relative; }
+.input-icon-wrap i { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: .95rem; pointer-events: none; }
+.input-icon-wrap .glass-input { padding-left: 2.4rem; }
+.form-check-input { background-color: rgba(255,255,255,.06); border-color: var(--glass-border); }
+.form-check-input:checked { background-color: var(--accent-gold); border-color: var(--accent-gold); }
+.form-check-label { color: var(--text-muted); }
+.link-muted { color: var(--accent-gold-soft); font-weight: 600; cursor: pointer; }
+.link-muted:hover { color: var(--accent-gold); }
+.switch-line { text-align: center; margin-top: 1rem; margin-bottom: 0; color: var(--text-muted); font-size: .85rem; }
+.switch-line a { color: var(--accent-violet-soft); font-weight: 700; cursor: pointer; }
+.switch-line a:hover { color: var(--accent-violet); }
+
+/* Buttons: pill -> rounded rect on hover, with glow */
+.btn-portal { border: none; padding: .6rem 1.9rem; border-radius: 999px; font-weight: 700; font-size: .92rem; letter-spacing: .01em; cursor: pointer; transition: border-radius .35s ease, transform .25s ease, box-shadow .35s ease, background .35s ease; }
+.btn-portal:hover { border-radius: 12px; transform: translateY(-2px); }
+.btn-portal-gold { background: linear-gradient(135deg, var(--accent-gold-soft), var(--accent-gold)); color: #1a1206; }
+.btn-portal-gold:hover { box-shadow: var(--shadow-glow-gold); animation: pulseGlowGold 1.6s ease-in-out infinite; }
+.btn-portal-violet { background: linear-gradient(135deg, var(--accent-violet-soft), var(--accent-violet)); color: #150a26; }
+.btn-portal-violet:hover { box-shadow: var(--shadow-glow-violet); animation: pulseGlowViolet 1.6s ease-in-out infinite; }
+
+/* ================= KEYFRAME ANIMATIONS ================= */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(.94); } }
+@keyframes slideFromRight { from { opacity: 0; transform: translateX(100vw); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideFromLeft  { from { opacity: 0; transform: translateX(-100vw); } to { opacity: 1; transform: translateX(0); } }
+@keyframes softGlow { 0%, 100% { opacity: .4; } 50% { opacity: .8; } }
+@keyframes rotateAura { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes portalRise { from { opacity: 0; transform: translateY(24px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes pulseGlowGold { 0%, 100% { box-shadow: 0 0 18px rgba(203,161,53,.35); } 50% { box-shadow: 0 0 40px rgba(203,161,53,.65); } }
+@keyframes pulseGlowViolet { 0%, 100% { box-shadow: 0 0 18px rgba(138,111,209,.35); } 50% { box-shadow: 0 0 40px rgba(138,111,209,.65); } }
+
+.anim-fade-out    { animation: fadeOut .35s ease forwards; }
+.anim-slide-right { animation: slideFromRight .65s cubic-bezier(.22,1,.36,1) forwards; }
+.anim-slide-left  { animation: slideFromLeft .65s cubic-bezier(.22,1,.36,1) forwards; }
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 767.98px) {
+  .panel { padding: 2.25rem 1.5rem; }
+  .display-title { font-size: 2.5rem; }
+  .form-title { font-size: 1.9rem; }
+  .welcome-actions { flex-direction: column; align-items: stretch; }
+  .btn-portal { width: 100%; }
+  .main-wrapper { padding-top: 6.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND VIDEO PLACEHOLDER -->
+<div class="bg-video-wrapper">
+  <video class="bg-video" autoplay muted loop playsinline poster="">
+    <!-- <source src="your-video.mp4" type="video/mp4"> -->
+  </video>
+  <div class="bg-scrim"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg glass-navbar fixed-top">
+  <div class="container-fluid px-4 px-lg-5">
+    <a class="navbar-brand brand-logo" href="#"><i class="me-2">🏴‍☠️</i>Raja Ahmed</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navContent">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+        <li class="nav-item ms-lg-2"><button class="btn btn-nav-cta" id="navLoginBtn">Login</button></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main-wrapper d-flex align-items-center justify-content-center">
+  <div class="auth-portal" id="authPortal">
+
+    <!-- WELCOME -->
+    <section class="panel welcome-panel" id="welcomePanel">
+      <p class="eyebrow">RA World</p>
+      <h1 class="display-title">Welcome</h1>
+      <p class="lede">Your world, one gateway away. Sign in to continue, or create an account to begin.</p>
+      <div class="welcome-actions">
+        <button class="btn btn-portal btn-portal-gold" id="showLoginBtn"><i class="bi bi-box-arrow-in-right me-2"></i>Login</button>
+        <button class="btn btn-portal btn-portal-violet" id="showSignupBtn"><i class="bi bi-person-plus me-2"></i>Sign Up</button>
+      </div>
+    </section>
+
+    <!-- LOGIN -->
+    <section class="panel d-none" id="loginPanel">
+      <button class="btn btn-back" id="loginBackBtn" aria-label="Back"><i class="bi bi-arrow-left"></i></button>
+      <p class="eyebrow">Welcome Back</p>
+      <h2 class="form-title">Login</h2>
+      <form id="loginForm" novalidate>
+        <div class="mb-2 field-group">
+          <label for="loginEmail" class="form-label">Email Address</label>
+          <div class="input-icon-wrap"><i class="bi bi-envelope"></i>
+            <input type="email" class="form-control glass-input" id="loginEmail" placeholder="you@example.com" required>
+          </div>
+        </div>
+        <div class="mb-2 field-group">
+          <label for="loginPassword" class="form-label">Password</label>
+          <div class="input-icon-wrap"><i class="bi bi-lock"></i>
+            <input type="password" class="form-control glass-input" id="loginPassword" placeholder="••••••••" required>
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="rememberMe">
+            <label class="form-check-label small" for="rememberMe">Remember Me</label>
+          </div>
+          <a href="#" class="small link-muted">Forgot Password?</a>
+        </div>
+        <button type="submit" class="btn btn-portal btn-portal-gold w-100">Login</button>
+        <p class="switch-line">Don't have an account? <a id="toSignupLink">Sign Up</a></p>
+      </form>
+    </section>
+
+    <!-- SIGN UP -->
+    <section class="panel d-none" id="signupPanel">
+      <button class="btn btn-back" id="signupBackBtn" aria-label="Back"><i class="bi bi-arrow-left"></i></button>
+      <p class="eyebrow">Create Account</p>
+      <h2 class="form-title">Sign Up</h2>
+      <form id="signupForm" novalidate>
+        <div class="row g-2">
+          <div class="col-md-6 field-group"><label for="fullName" class="form-label">Full Name</label>
+            <input type="text" class="form-control glass-input" id="fullName" placeholder="Full name" required></div>
+          <div class="col-md-6 field-group"><label for="fatherName" class="form-label">Father Name</label>
+            <input type="text" class="form-control glass-input" id="fatherName" placeholder="Father's name" required></div>
+          <div class="col-md-6 field-group"><label for="signupEmail" class="form-label">Email Address</label>
+            <input type="email" class="form-control glass-input" id="signupEmail" placeholder="you@example.com" required></div>
+          <div class="col-md-6 field-group"><label for="phoneNumber" class="form-label">Phone Number</label>
+            <input type="tel" class="form-control glass-input" id="phoneNumber" placeholder="+92 3XX XXXXXXX" required></div>
+          <div class="col-md-6 field-group"><label for="cnic" class="form-label">CNIC</label>
+            <input type="text" class="form-control glass-input" id="cnic" placeholder="XXXXX-XXXXXXX-X" required></div>
+          <div class="col-md-6 field-group"><label for="dob" class="form-label">Date of Birth</label>
+            <input type="date" class="form-control glass-input" id="dob" required></div>
+          <div class="col-md-6 field-group"><label for="gender" class="form-label">Gender</label>
+            <select class="form-select glass-input" id="gender" required>
+              <option value="" selected disabled>Select gender</option>
+              <option value="female">Female</option><option value="male">Male</option>
+              <option value="other">Other</option><option value="prefer-not">Prefer not to say</option>
+            </select></div>
+          <div class="col-md-6 field-group"><label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control glass-input" id="address" placeholder="Street, city" required></div>
+          <div class="col-md-6 field-group"><label for="signupPassword" class="form-label">Password</label>
+            <input type="password" class="form-control glass-input" id="signupPassword" placeholder="••••••••" required></div>
+          <div class="col-md-6 field-group"><label for="confirmPassword" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control glass-input" id="confirmPassword" placeholder="••••••••" required></div>
+        </div>
+        <button type="submit" class="btn btn-portal btn-portal-violet w-100 mt-3">Sign Up</button>
+        <p class="switch-line">Already have an account? <a id="toLoginLink">Login</a></p>
+      </form>
+    </section>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+  var welcomePanel = document.getElementById('welcomePanel');
+  var loginPanel   = document.getElementById('loginPanel');
+  var signupPanel  = document.getElementById('signupPanel');
+
+  function switchPanel(hidePanel, showPanel, direction) {
+    hidePanel.classList.remove('anim-slide-left', 'anim-slide-right');
+    hidePanel.classList.add('anim-fade-out');
+
+    function onEnd(evt) {
+      if (evt.target !== hidePanel) return;
+      hidePanel.removeEventListener('animationend', onEnd);
+      hidePanel.classList.add('d-none');
+      hidePanel.classList.remove('anim-fade-out');
+
+      showPanel.classList.remove('d-none', 'anim-slide-left', 'anim-slide-right');
+      void showPanel.offsetWidth; // restart animation every time
+      showPanel.classList.add(direction === 'right' ? 'anim-slide-right' : 'anim-slide-left');
+    }
+    hidePanel.addEventListener('animationend', onEnd);
+  }
+
+  document.getElementById('showLoginBtn').addEventListener('click', function () { switchPanel(welcomePanel, loginPanel, 'right'); });
+  document.getElementById('navLoginBtn').addEventListener('click', function () { switchPanel(welcomePanel, loginPanel, 'right'); });
+  document.getElementById('showSignupBtn').addEventListener('click', function () { switchPanel(welcomePanel, signupPanel, 'left'); });
+
+  document.getElementById('toSignupLink').addEventListener('click', function (e) { e.preventDefault(); switchPanel(loginPanel, signupPanel, 'left'); });
+  document.getElementById('toLoginLink').addEventListener('click', function (e) { e.preventDefault(); switchPanel(signupPanel, loginPanel, 'right'); });
+
+  document.getElementById('loginBackBtn').addEventListener('click', function () { switchPanel(loginPanel, welcomePanel, 'left'); });
+  document.getElementById('signupBackBtn').addEventListener('click', function () { switchPanel(signupPanel, welcomePanel, 'right'); });
+
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    console.log('Login submitted', {
+      email: document.getElementById('loginEmail').value,
+      remember: document.getElementById('rememberMe').checked
+    });
+  });
+
+  document.getElementById('signupForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var pw = document.getElementById('signupPassword').value;
+    var cpw = document.getElementById('confirmPassword').value;
+    if (pw !== cpw) { alert('Passwords do not match.'); return; }
+    console.log('Sign up submitted', { fullName: document.getElementById('fullName').value });
+  });
+})();
+</script>
+</body>
+</html>
